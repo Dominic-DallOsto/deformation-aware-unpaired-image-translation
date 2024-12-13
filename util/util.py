@@ -103,6 +103,7 @@ def hex_to_rgb(value):
     return tuple(int(value[i:i + lv // 3], 16) for i in range(0, lv, lv // 3))
 
 def draw_skeleton(img, keypoints, width = 1 , r = 1):
+    # Note: keypoints at (0,0) weren't successfully labelled in the source image
     color = ['#0F7399','#1A8DAF','#75BECB','#BA1E31','#C9564F','#D58579']
     im = copy.deepcopy(img)
     width = r = max(1, im.size[0] // 100)
@@ -118,7 +119,8 @@ def draw_skeleton(img, keypoints, width = 1 , r = 1):
                 d.line([(y1,x1),(y2,x2)], fill = hex_to_rgb(color[i]),width=width)
         # d.line(list(zip(y,x)), fill = hex_to_rgb(color[i]),width= width)
         for j in range(5):
-            d.ellipse((y[j]-r, x[j]-r, y[j]+r, x[j]+r), fill = 'red', outline ='red')
+            if not (x[j] == 0 and y[j] == 0):
+                d.ellipse((y[j]-r, x[j]-r, y[j]+r, x[j]+r), fill = 'red', outline ='red')
     return im
 
 def swapxy(joints):
