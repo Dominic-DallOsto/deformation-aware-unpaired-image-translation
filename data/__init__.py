@@ -2,7 +2,7 @@ import importlib
 import torch.utils.data
 from data.base_data_loader import BaseDataLoader
 from data.base_dataset import BaseDataset
-
+import math
 
 def find_dataset_using_name(dataset_name):
     # Given the option --dataset_mode [datasetname],
@@ -66,7 +66,7 @@ class CustomDatasetDataLoader(BaseDataLoader):
         return self
 
     def __len__(self):
-        return min(len(self.dataset), self.opt.max_dataset_size)
+        return math.ceil(min(len(self.dataset), self.opt.max_dataset_size) / self.opt.batch_size)
 
     def __iter__(self):
         for i, data in enumerate(self.dataloader):

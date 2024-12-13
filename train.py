@@ -10,6 +10,7 @@ import os
 import pickle
 from util.util import *
 import random
+import tqdm
 # from pytorch_msssim import ssim, ms_ssim, SSIM, MS_SSIM
 
 
@@ -19,7 +20,7 @@ if __name__ == '__main__':
     opt = TrainOptions().parse()
     data_loader = CreateDataLoader(opt)
     dataset = data_loader.load_data()
-    dataset_size = len(data_loader)
+    dataset_size = len(data_loader.dataset)
     print('#training images = %d' % dataset_size)
 
     model = create_model(opt)
@@ -40,8 +41,10 @@ if __name__ == '__main__':
 #     best_img_epoch = 0
     best_pose_epoch = 0
     
+    start_epoch = opt.epoch_count
+    end_epoch = opt.niter + opt.niter_decay
 
-    for epoch in range(opt.epoch_count, opt.niter + opt.niter_decay + 1):
+    for epoch in range(start_epoch, end_epoch + 1):
 
         epoch_start_time = time.time()
         iter_data_time = time.time()
@@ -50,7 +53,7 @@ if __name__ == '__main__':
 #         ssim_image[opt.epoch_count] = 0
         
 
-        for i, data in enumerate(dataset):
+        for i, data in enumerate(tqdm.tqdm(dataset, desc=f"Epoch {epoch}/{end_epoch}")):
             iter_start_time = time.time()
             if total_steps % opt.print_freq == 0:
                 t_data = iter_start_time - iter_data_time
@@ -61,7 +64,7 @@ if __name__ == '__main__':
             model.optimize_parameters()
 
             if total_steps % opt.display_freq == 0:
-                print(total_steps)
+                # print(total_steps)
                 save_result = total_steps % opt.update_html_freq == 0
                 
                 # whether in pose estimation mode
@@ -85,8 +88,8 @@ if __name__ == '__main__':
                     visualizer.plot_current_losses(epoch, float(epoch_iter) / dataset_size, opt, losses)
 
             if total_steps % opt.save_latest_freq == 0:
-                print('saving the latest model (epoch %d, total_steps %d)' %
-                      (epoch, total_steps))
+                # print('saving the latest model (epoch %d, total_steps %d)' %
+                #       (epoch, total_steps))
                 model.save_networks('latest')
 
             iter_data_time = time.time()

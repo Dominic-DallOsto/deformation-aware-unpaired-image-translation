@@ -248,6 +248,6 @@ class Visualizer():
 #         message += ' best_mask_epoch: %d'%(best_mask_epoch)
 #         message += ' best_img_epoch: %d'%(best_img_epoch)
         message += ' best_pose_epoch: %d'%(best_pose_epoch)
-        print(message)
+        # print(message)
         with open(self.log_name, "a") as log_file:
             log_file.write('%s\n' % message)
