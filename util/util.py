@@ -103,14 +103,20 @@ def hex_to_rgb(value):
     return tuple(int(value[i:i + lv // 3], 16) for i in range(0, lv, lv // 3))
 
 def draw_skeleton(img, keypoints, width = 1 , r = 1):
-    color = ['#A64AC9','#FCCD04','#FFB48F','F5E6CC','17E9E0','86C232' ]
+    color = ['#0F7399','#1A8DAF','#75BECB','#BA1E31','#C9564F','#D58579']
     im = copy.deepcopy(img)
+    width = r = max(1, im.size[0] // 100)
     d = ImageDraw.Draw(im)
     num_legs = int(len(keypoints)/5)
     for i in range(num_legs):
         x = keypoints[np.arange(0+i*5,(i+1)*5,1).tolist(),1]
         y = keypoints[np.arange(0+i*5,(i+1)*5,1).tolist(),0]
-        d.line(list(zip(y,x)), fill = hex_to_rgb(color[i]),width= width)
+        for x1, y1, x2, y2 in zip(x[:-1], y[:-1], x[1:], y[1:]):
+            if (x1 == 0 and y1 == 0) or (x2 == 0 and y2 == 0):
+                continue
+            else:
+                d.line([(y1,x1),(y2,x2)], fill = hex_to_rgb(color[i]),width=width)
+        # d.line(list(zip(y,x)), fill = hex_to_rgb(color[i]),width= width)
         for j in range(5):
             d.ellipse((y[j]-r, x[j]-r, y[j]+r, x[j]+r), fill = 'red', outline ='red')
     return im

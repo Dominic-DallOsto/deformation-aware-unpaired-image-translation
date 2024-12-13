@@ -146,7 +146,7 @@ class Visualizer():
 #                     image=image[:,0,:,:].unsqueeze(0)
 
                     image_numpy = util.tensor2im(image)
-                    if(image_numpy.shape[0]!=128):
+                    if(image_numpy.shape[0] < 128):
                         im_ = np.zeros((128,128,3))
                         im_[:image_numpy.shape[0],:image_numpy.shape[0],:] += image_numpy
                         image_numpy = im_

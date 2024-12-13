@@ -461,6 +461,8 @@ class AffineNet(nn.Module):
             nn.SELU(True),
             nn.Conv2d(40, 10, kernel_size=3),
             nn.SELU(True),
+            nn.AdaptiveMaxPool2d((3, 3)), # add this here to enforce that it ends up producing 10x3x3 outputs no matter the input image size
+            nn.SELU(True),
         )
         
         self.stl_fc =  self.fc_loc = nn.Sequential(
@@ -475,7 +477,7 @@ class AffineNet(nn.Module):
         
         
     def forward(self, x):
-        
+        # this seems to be hardcoded to work with 128*128 images at the moment - output of affine_stl is batch_size*10*3*3 but for 256*256 images it's batch_size*10*11*11
         xs = self.affine_stl(x)
         xs = xs.view(-1, 10 * 3 * 3)
         theta = self.stl_fc(xs)
